@@ -70,14 +70,14 @@ def random_flop_get(power, reraise=False):
             if data[k][1] < power: continue
         else:
             if data[k][0] < power: continue
-        a0 = "♥♤◆♧"[s0] + f"{itoc[r0 % 13]}"
-        a1 = "♥♤◆♧"[s1] + f"{itoc[r1 % 13]}"
+        a0 = "♥♠◇♧"[s0] + f"{itoc[r0 % 13]}"
+        a1 = "♥♠◇♧"[s1] + f"{itoc[r1 % 13]}"
         return a0, a1
 
 def print_stat():
     # if random.random() < 0.1:
     #     print("### リンプイン ###")
-    print("相手のレイズ", end="：")
+    print("リレイズスタート時相手レイズ", end="：")
     for i in range(3):
         ok = ['ブラフ', "真"][int(random.random() < 0.7)]
         print(f"{ok} ", end="")
@@ -173,5 +173,5 @@ def plot():
     ax.add_table(tb)
     plt.show()
 
-# print_stat()
-plot()
+print_stat()
+# plot()
