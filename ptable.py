@@ -92,7 +92,7 @@ def print_stat():
             if random.random() < 0.5: text += " CALL"
             else: text += " BET"
         print(text)
-    print("BB: 相手の確率があればコール")
+    # print("BB: 相手の確率があればコール")
 
 def pick_raise(x, y):
     key = to_key(x, y)
