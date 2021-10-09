@@ -1,34 +1,17 @@
 import matplotlib.pyplot as plt
 from matplotlib.table import Table
 import numpy as np
-
-# 1人以上脱落 and 20BB以上: 普通に
-# よくあるフリップ後の確率が知りたい
-
-# $ python3 ptable.py
-# 99, 21, 32, 32, 43, 01, 44, 33 # 確率的に動くためのもの
-# 相手のレイズ：「1はブラフ」「2は真」「3はブラフ」 #
-# UG: ♤K ♥K /
-# HJ: ♤K ♥K /
-# CO: ♤K ♥K /
-# BN: ♤9 ♥9 /
-# SB: ♤9 ♥9 / / [RAISE/ CALL]
-# BB: ♤9 ♥9 /   []
-# no additional card (50%)
-
+import random
 
 data = {
     # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    # 自分がSB <= 傾斜あり50%くらいでコールから入った方がいい(相手はランダムハンドであるため)
-    # reraise rate
-    # 自分がBB <= スーテッド{4以上の01コネクタ,A}, 全ポケットでレイズにコール
     "AA" : [6, 5], "KK" : [6, 5], "QQ": [6, 5], "JJ": [6, 4.8],
     "TT" : [6, 4], "99" : [6, 4], "88": [6, 3], "77": [6, 2],
     "66" : [6, 5], "55" : [6], "44": [3.9], "33": [3.2],
     "22" : [3],
     "AKs": [6, 5], "AQs": [6, 4.4], "AJs": [6, 4.9], "ATs": [6, 5],
     "A9s": [6], "A8s": [6], "A7s": [6], "A6s": [6],
-    "A5s": [6, 5], "A4s": [6, 5], "A3s": [6], "A2s": [6],
+    "A5s": [6, 5], "A4s": [6, 5], "A3s": [6, 5], "A2s": [6, 5],
     "KQs": [6, 5], "KJs": [6, 4.1], "KTs": [6], "K9s": [6],
     "K8s": [4], "K7s": [4], "K6s": [3], "K5s": [3],
     "K4s": [3], "K3s": [3], "K2s": [3],
@@ -64,7 +47,7 @@ data = {
 
 itoc = "AKQJT98765432"
 itoseat = ["UG", "HJ", "CO", "BN", "SB", "BB"]
-itoNum  = []
+itonum  = [5, 4, 3, 2, 1, 0]
 
 def to_key(x, y):
     ix = itoc[x]
@@ -73,9 +56,43 @@ def to_key(x, y):
     elif x < y : return ix + iy + "s"
     else: return iy + ix + "o"
 
-# def random_flop_get():
+def random_flop_get(power, reraise=False):
+    while True:
+        r0 = random.choice([i for i in range(52)])
+        s0 = int(r0 / 13)
+        r1 = random.choice([i for i in range(52)])
+        s1 = int(r1 / 13)
+        if r0 == r1: continue
+        k = to_key(r0 % 13, r1 % 13)
+        if not (k in data): continue
+        if reraise:
+            if len(data[k]) == 1 : continue
+            if data[k][1] < power: continue
+        else:
+            if data[k][0] < power: continue
+        a0 = "♥♤◆♧"[s0] + f"{itoc[r0 % 13]}"
+        a1 = "♥♤◆♧"[s1] + f"{itoc[r1 % 13]}"
+        return a0, a1
 
-
+def print_stat():
+    print("相手のレイズ", end="：")
+    for i in range(3):
+        ok = ['ブラフ', "真"][int(random.random() < 0.7)]
+        print(f"{ok} ", end="")
+    print()
+    r0, r1 = random_flop_get(0, True)
+    print(f"リレイズ: {r0} {r1}")
+    for i in range(6):
+        power = itonum[i] + random.random()
+        r0, r1 = random_flop_get(power)
+        text = f"{itoseat[i]}({power:.1f}): {r0} {r1}"
+        if itoseat[i] == "SB":
+            if random.random() < 0.5: text += " CALL"
+            else: text += " BET"
+        print(text)
+    print("BB: 相手の確率があればコール")
+    # 1人以上脱落 and 20BB以上: 普通に
+    # よくあるフリップ後の確率が知りたい
 
 def pick_raise(x, y):
     key = to_key(x, y)
@@ -149,5 +166,5 @@ def plot():
     ax.add_table(tb)
     plt.show()
 
-
-plot()
+print_stat()
+# plot()

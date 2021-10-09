@@ -30,21 +30,6 @@ import random
 #   - 70%: 相手のストーリーは真。ちゃんと勝てそうなら乗る
 
 
-def rate(suited, x0, x1):
-    if x0 > x1:
-        x1, x0 = x0, x1
-    if x0 == x1:
-        return [
-            0, 0.853, 0.503, 0.537, # 3]
-            0.570, 0.603, 0.633, 0.662, # 7]
-            0.691, 0.721, 0.751, 0.775, # 11]
-            0.799, 0.824][x0]
-    elif suited:
-        pass
-    else:
-        pass
-
-
 def printCard():
     r0 = random.choice([i for i in range(52)])
     s0 = int(r0 / 13)
