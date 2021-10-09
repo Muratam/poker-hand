@@ -75,6 +75,8 @@ def random_flop_get(power, reraise=False):
         return a0, a1
 
 def print_stat():
+    if random.random() < 0.1:
+        print("### リンプイン ###")
     print("相手のレイズ", end="：")
     for i in range(3):
         ok = ['ブラフ', "真"][int(random.random() < 0.7)]
