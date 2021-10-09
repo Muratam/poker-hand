@@ -93,8 +93,6 @@ def print_stat():
             else: text += " BET"
         print(text)
     print("BB: 相手の確率があればコール")
-    # 1人以上脱落 and 20BB以上: 普通に
-    # よくあるフリップ後の確率が知りたい
 
 def pick_raise(x, y):
     key = to_key(x, y)
