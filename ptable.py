@@ -75,24 +75,29 @@ def random_flop_get(power, reraise=False):
         return a0, a1
 
 def print_stat():
-    if random.random() < 0.1:
-        print("### リンプイン ###")
-    print("相手のレイズ", end="：")
-    for i in range(3):
-        ok = ['ブラフ', "真"][int(random.random() < 0.7)]
-        print(f"{ok} ", end="")
-    print()
+    # if random.random() < 0.1:
+    #     print("### リンプイン ###")
+    # print("相手のレイズ", end="：")
+    # for i in range(3):
+    #     ok = ['ブラフ', "真"][int(random.random() < 0.7)]
+    #     print(f"{ok} ", end="")
+    # print()
     r0, r1 = random_flop_get(0, True)
-    print(f"リレイズ: {r0} {r1}")
+    print(f"{r0} {r1} : リレイズ")
     for i in range(6):
         power = itonum[i] + random.random()
         r0, r1 = random_flop_get(power)
-        text = f"{itoseat[i]}({power:.1f}): {r0} {r1}"
+        text = f"{r0} {r1} : {itoseat[i]}({power:.1f})"
         if itoseat[i] == "SB":
             if random.random() < 0.5: text += " CALL"
             else: text += " BET"
         print(text)
     # print("BB: 相手の確率があればコール")
+    # つまり、これ以上の倍率でいくと相手が乗ってしまう、ので、先に降ろす
+    # フロップ時点(あと1枚で系)
+    # 1/4 (フラッシュ)
+    # 1/6 (ストレート)
+    # 1/7 (任意の一枚がほしい)
 
 def pick_raise(x, y):
     key = to_key(x, y)
@@ -124,7 +129,7 @@ def plot():
     plt.rcParams['font.family'] = 'Courier'
     plt.tick_params(labelsize=30)
     fig, ax = plt.subplots()
-    fig.suptitle('UTG:5.5, HJ:4.5, CO:3.5, BTN:2.5, SB:1.5, BB:0.5')
+    fig.suptitle('UTG:6, HJ:5, CO:4, BTN:3, SB:2, BB:1')
     ax.set_axis_off()
     tb = Table(ax, bbox=[0,0,1,1])
     size = 1.0 / 13.0
