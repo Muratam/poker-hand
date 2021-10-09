@@ -3,10 +3,6 @@ from matplotlib.table import Table
 import numpy as np
 
 # 1人以上脱落 and 20BB以上: 普通に
-# - ポジション別レイズ表
-# - ポジション別リレイズ表
-# - ポジション別リリレイズ表
-# 20BB以上 or 0人脱落 -> かなりタイトに
 # よくあるフリップ後の確率が知りたい
 
 # $ python3 ptable.py
@@ -65,7 +61,10 @@ data = {
     "87o": [2],
 }
 
+
 itoc = "AKQJT98765432"
+itoseat = ["UG", "HJ", "CO", "BN", "SB", "BB"]
+itoNum  = []
 
 def to_key(x, y):
     ix = itoc[x]
@@ -73,6 +72,10 @@ def to_key(x, y):
     if x == y: return ix + iy
     elif x < y : return ix + iy + "s"
     else: return iy + ix + "o"
+
+# def random_flop_get():
+
+
 
 def pick_raise(x, y):
     key = to_key(x, y)
@@ -110,22 +113,39 @@ def plot():
     size = 1.0 / 13.0
     for x in range(13):
         for y in range(13):
-            v = (x + y) / 26
-            color = plt.cm.Greens_r(v)
+            edgecolor = 'none'
+            if x == 6 or y == 6: edgecolor = "#ccc"
             tb.add_cell(x, y, size, size, text=pick_raise_text(x, y),
                         loc='center', facecolor=pick_reraise_color(x,y),
-                        edgecolor='none')
+                        edgecolor=edgecolor)
+    for cell in tb._cells:
+        prop = tb._cells[cell].get_text()
+        text = prop.get_text()
+        try:
+            v = 1.0 - float(text) / 6
+            prop.set_color((v, v, v))
+        except ValueError: pass
+        prop.set_fontstyle('italic')
+
     for i in range(13):
         tb.add_cell(i, -1, size, size, text=itoc[i], loc='center',
-                    edgecolor='none', facecolor='none')
+                    edgecolor='#ccc', facecolor='none')
         tb.add_cell(i, 13, size, size, text=itoc[i], loc='center',
-                    edgecolor='none', facecolor='none')
+                    edgecolor='#ccc', facecolor='none')
         tb.add_cell(-1, i, size, size, text=itoc[i], loc='center',
-                           edgecolor='none', facecolor='none')
+                           edgecolor='#ccc', facecolor='none')
         tb.add_cell(13, i, size, size, text=itoc[i], loc='center',
-                           edgecolor='none', facecolor='none')
+                           edgecolor='#ccc', facecolor='none')
     tb.add_cell(-1, -1, size, size, text="o \ s", loc='center',
-                    edgecolor='none', facecolor='none')
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(-1, 13, size, size, text="s", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(13, -1, size, size, text="o", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(13, 13, size, size, text="o \ s", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.auto_set_font_size(False)
+    tb.set_fontsize(12)
     ax.add_table(tb)
     plt.show()
 
