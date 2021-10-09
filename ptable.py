@@ -7,7 +7,7 @@ data = {
     # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
     "AA" : [6, 5], "KK" : [6, 5], "QQ": [6, 5], "JJ": [6, 4.8],
     "TT" : [6, 4], "99" : [6, 4], "88": [6, 3], "77": [6, 2],
-    "66" : [6, 5], "55" : [6], "44": [3.9], "33": [3.2],
+    "66" : [6], "55" : [6], "44": [3.9], "33": [3.2],
     "22" : [3],
     "AKs": [6, 5], "AQs": [6, 4.4], "AJs": [6, 4.9], "ATs": [6, 5],
     "A9s": [6], "A8s": [6], "A7s": [6], "A6s": [6],
@@ -77,11 +77,11 @@ def random_flop_get(power, reraise=False):
 def print_stat():
     # if random.random() < 0.1:
     #     print("### リンプイン ###")
-    # print("相手のレイズ", end="：")
-    # for i in range(3):
-    #     ok = ['ブラフ', "真"][int(random.random() < 0.7)]
-    #     print(f"{ok} ", end="")
-    # print()
+    print("相手のレイズ", end="：")
+    for i in range(3):
+        ok = ['ブラフ', "真"][int(random.random() < 0.7)]
+        print(f"{ok} ", end="")
+    print()
     r0, r1 = random_flop_get(0, True)
     print(f"{r0} {r1} : リレイズ")
     for i in range(6):
@@ -136,15 +136,17 @@ def plot():
     for x in range(13):
         for y in range(13):
             edgecolor = 'none'
-            if x == 6 or y == 6: edgecolor = "#ccc"
-            tb.add_cell(x, y, size, size, text=pick_raise_text(x, y),
+            text = pick_raise_text(x, y)
+            if x == 6 or y == 6:
+                edgecolor = "#ccc"
+            tb.add_cell(x, y, size, size, text=text,
                         loc='center', facecolor=pick_reraise_color(x,y),
                         edgecolor=edgecolor)
     for cell in tb._cells:
         prop = tb._cells[cell].get_text()
         text = prop.get_text()
         try:
-            v = 1.0 - float(text) / 6
+            v = 1.0 - float(text) * 6 // 6 / 6
             prop.set_color((v, v, v))
         except ValueError: pass
         prop.set_fontstyle('italic')
@@ -171,5 +173,5 @@ def plot():
     ax.add_table(tb)
     plt.show()
 
-print_stat()
-# plot()
+# print_stat()
+plot()
