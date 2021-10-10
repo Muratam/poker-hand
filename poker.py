@@ -78,8 +78,6 @@ def random_flop_get(power, reraise=False):
 def print_stat():
     itoseatpow  = [5, 4, 3, 2, 1, 0]
     itoseat = ["UG", "HJ", "CO", "BN", "SB", "BB"]
-    # if random.random() < 0.1:
-    #     print("### リンプイン ###")
     print("リレイズスタート時相手レイズ", end="：")
     for i in range(3):
         ok = ['ブラフ', "真"][int(random.random() < 0.7)]
@@ -95,12 +93,6 @@ def print_stat():
             if random.random() < 0.5: text += " CALL"
             else: text += " BET"
         print(text)
-    # print("BB: 相手の確率があればコール")
-    # つまり、これ以上の倍率でいくと相手が乗ってしまう、ので、先に降ろす
-    # フロップ時点(あと1枚で系)
-    # 1/4 (フラッシュ)
-    # 1/6 (ストレート)
-    # 1/7 (任意の一枚がほしい)
 
 def pick_raise(x, y):
     key = to_key(x, y)
@@ -177,9 +169,9 @@ def plot_handrange():
 
 
 vs_rate_cards = [
-    "AA", "KK", "QQ", "JJ",
+    "AA", "KK", "QQ", "JJ", "TT", "99",
     "AKs", "AKo", "AJs", "ATs",
-    "A5s", "A2s", "KQs"
+    "A5s", "A2s", "KQs", "65s"
 ]
 def run_to_data():
     def to_example(card, me):
@@ -208,125 +200,200 @@ def get_run_data():
     data = """
     AA:AA:95:2:2
     AA:KK:0:81:18
-    AA:QQ:0:80:19
+    AA:QQ:0:80:18
     AA:JJ:0:80:19
-    AA:AKo:1:91:6
+    AA:TT:0:79:19
+    AA:99:0:80:19
     AA:AKs:1:87:11
+    AA:AKo:1:91:6
     AA:AJs:1:86:12
     AA:ATs:1:86:12
-    AA:KQs:0:82:17
     AA:A5s:1:86:12
     AA:A2s:1:87:11
+    AA:KQs:0:82:17
+    AA:65s:0:76:22
     KK:AA:0:18:81
     KK:KK:95:2:2
-    KK:QQ:0:80:18
+    KK:QQ:0:81:18
     KK:JJ:0:80:19
-    KK:AKo:0:69:29
+    KK:TT:0:80:19
+    KK:99:0:80:19
     KK:AKs:0:65:33
+    KK:AKo:0:69:29
     KK:AJs:0:67:32
-    KK:ATs:0:67:32
-    KK:KQs:1:85:13
+    KK:ATs:0:66:32
     KK:A5s:0:66:33
     KK:A2s:0:67:32
+    KK:KQs:1:85:13
+    KK:65s:0:76:22
     QQ:AA:0:18:80
     QQ:KK:0:18:81
     QQ:QQ:95:2:2
     QQ:JJ:0:81:18
-    QQ:AKo:0:56:42
+    QQ:TT:0:80:19
+    QQ:99:0:80:19
     QQ:AKs:0:53:46
-    QQ:AJs:0:67:31
+    QQ:AKo:0:57:42
+    QQ:AJs:0:67:32
     QQ:ATs:0:67:32
-    QQ:KQs:1:64:34
     QQ:A5s:0:66:33
     QQ:A2s:0:67:32
+    QQ:KQs:1:64:34
+    QQ:65s:0:76:23
     JJ:AA:0:19:80
-    JJ:KK:0:19:80
-    JJ:QQ:0:18:81
+    JJ:KK:0:18:80
+    JJ:QQ:0:18:80
     JJ:JJ:95:2:2
-    JJ:AKo:0:56:42
-    JJ:AKs:0:53:46
+    JJ:TT:0:80:18
+    JJ:99:0:80:18
+    JJ:AKs:0:53:45
+    JJ:AKo:0:57:42
     JJ:AJs:1:64:33
-    JJ:ATs:0:67:31
-    JJ:KQs:0:53:46
+    JJ:ATs:0:67:32
     JJ:A5s:0:66:33
     JJ:A2s:0:67:32
-    AKo:AA:1:6:91
-    AKo:KK:0:29:69
-    AKo:QQ:0:42:57
-    AKo:JJ:0:42:57
-    AKo:AKo:95:2:2
-    AKo:AKs:90:2:7
-    AKo:AJs:4:67:28
-    AKo:ATs:4:66:28
-    AKo:KQs:1:69:29
-    AKo:A5s:4:65:29
-    AKo:A2s:4:66:28
+    JJ:KQs:0:53:46
+    JJ:65s:0:76:22
+    TT:AA:0:19:79
+    TT:KK:0:19:80
+    TT:QQ:0:18:80
+    TT:JJ:0:18:80
+    TT:TT:95:2:2
+    TT:99:0:80:18
+    TT:AKs:0:53:46
+    TT:AKo:0:57:42
+    TT:AJs:0:54:45
+    TT:ATs:2:64:33
+    TT:A5s:0:66:33
+    TT:A2s:0:67:32
+    TT:KQs:0:53:46
+    TT:65s:0:77:22
+    99:AA:0:19:80
+    99:KK:0:19:80
+    99:QQ:0:19:80
+    99:JJ:0:18:80
+    99:TT:0:18:80
+    99:99:95:2:2
+    99:AKs:0:52:47
+    99:AKo:0:55:44
+    99:AJs:0:52:47
+    99:ATs:0:52:46
+    99:A5s:0:65:34
+    99:A2s:0:66:33
+    99:KQs:0:52:47
+    99:65s:0:77:21
     AKs:AA:1:11:87
     AKs:KK:0:33:65
-    AKs:QQ:0:46:53
+    AKs:QQ:0:45:53
     AKs:JJ:0:45:53
-    AKs:AKo:90:7:2
+    AKs:TT:0:45:53
+    AKs:99:0:47:51
     AKs:AKs:85:7:7
-    AKs:AJs:4:68:26
+    AKs:AKo:90:7:2
+    AKs:AJs:4:69:26
     AKs:ATs:4:68:27
-    AKs:KQs:1:70:28
     AKs:A5s:4:67:28
     AKs:A2s:4:68:26
+    AKs:KQs:1:70:27
+    AKs:65s:0:59:39
+    AKo:AA:1:6:92
+    AKo:KK:0:29:69
+    AKo:QQ:0:42:56
+    AKo:JJ:0:42:57
+    AKo:TT:0:42:57
+    AKo:99:0:44:55
+    AKo:AKs:90:2:6
+    AKo:AKo:95:2:2
+    AKo:AJs:4:67:28
+    AKo:ATs:4:67:28
+    AKo:A5s:4:65:29
+    AKo:A2s:4:66:28
+    AKo:KQs:1:69:29
+    AKo:65s:0:57:41
     AJs:AA:1:12:86
     AJs:KK:0:32:67
-    AJs:QQ:0:32:67
+    AJs:QQ:0:31:67
     AJs:JJ:1:33:64
-    AJs:AKo:4:28:67
+    AJs:TT:0:45:53
+    AJs:99:0:47:52
     AJs:AKs:4:26:68
+    AJs:AKo:4:28:66
     AJs:AJs:85:7:7
     AJs:ATs:7:66:26
-    AJs:KQs:0:58:41
     AJs:A5s:7:64:28
     AJs:A2s:7:66:26
+    AJs:KQs:0:57:41
+    AJs:65s:0:60:38
     ATs:AA:1:12:86
     ATs:KK:0:32:67
     ATs:QQ:0:32:67
     ATs:JJ:0:32:67
+    ATs:TT:2:33:64
+    ATs:99:0:47:52
+    ATs:AKs:4:26:68
     ATs:AKo:4:28:66
-    ATs:AKs:4:27:68
     ATs:AJs:7:26:66
     ATs:ATs:85:7:7
-    ATs:KQs:0:58:41
     ATs:A5s:9:62:27
     ATs:A2s:9:63:26
-    KQs:AA:0:17:82
-    KQs:KK:1:13:85
-    KQs:QQ:1:34:63
-    KQs:JJ:0:46:53
-    KQs:AKo:1:29:69
-    KQs:AKs:1:27:71
-    KQs:AJs:0:41:57
-    KQs:ATs:0:41:58
-    KQs:KQs:85:7:7
-    KQs:A5s:0:42:56
-    KQs:A2s:0:42:56
-    A5s:AA:1:12:85
+    ATs:KQs:0:57:41
+    ATs:65s:0:61:38
+    A5s:AA:1:12:86
     A5s:KK:0:33:66
     A5s:QQ:0:33:66
     A5s:JJ:0:33:66
+    A5s:TT:0:33:66
+    A5s:99:0:34:65
+    A5s:AKs:4:27:67
     A5s:AKo:4:29:65
-    A5s:AKs:4:28:67
     A5s:AJs:7:28:64
     A5s:ATs:9:27:62
-    A5s:KQs:0:56:43
     A5s:A5s:85:7:7
-    A5s:A2s:38:36:25
+    A5s:A2s:38:35:25
+    A5s:KQs:0:56:43
+    A5s:65s:2:66:31
     A2s:AA:1:11:87
     A2s:KK:0:32:67
     A2s:QQ:0:32:67
     A2s:JJ:0:32:67
-    A2s:AKo:4:28:67
+    A2s:TT:0:32:67
+    A2s:99:0:33:66
     A2s:AKs:4:26:68
-    A2s:AJs:7:26:65
+    A2s:AKo:4:28:66
+    A2s:AJs:7:26:66
     A2s:ATs:9:26:63
-    A2s:KQs:0:56:43
     A2s:A5s:38:25:36
     A2s:A2s:85:7:7
+    A2s:KQs:0:56:42
+    A2s:65s:0:54:45
+    KQs:AA:0:17:82
+    KQs:KK:1:13:85
+    KQs:QQ:1:34:64
+    KQs:JJ:0:46:53
+    KQs:TT:0:46:53
+    KQs:99:0:47:52
+    KQs:AKs:1:28:70
+    KQs:AKo:1:29:69
+    KQs:AJs:0:41:58
+    KQs:ATs:0:41:58
+    KQs:A5s:0:43:56
+    KQs:A2s:0:43:56
+    KQs:KQs:85:7:7
+    KQs:65s:0:60:38
+    65s:AA:0:22:76
+    65s:KK:0:22:77
+    65s:QQ:0:22:76
+    65s:JJ:0:22:77
+    65s:TT:0:22:77
+    65s:99:0:21:77
+    65s:AKs:0:39:60
+    65s:AKo:0:41:57
+    65s:AJs:0:38:60
+    65s:ATs:0:38:61
+    65s:A5s:2:32:65
+    65s:A2s:0:44:54
+    65s:KQs:0:38:60
+    65s:65s:85:7:7
     """
     result = {}
     for d in data.replace(" ", "").strip().split("\n"):
@@ -344,7 +411,6 @@ def plot_vs_rate():
     cards = vs_rate_cards
     tb = Table(ax, bbox=[0,0,1,1])
     data = get_run_data()
-    print(data)
     size = 1.0 / (len(cards) + 2.0)
     for x in range(len(cards)):
         for y in range(len(cards)):
@@ -384,10 +450,6 @@ def plot_vs_rate():
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.tick_params(labelsize=30)
     plt.show()
-    # 1vs1で勝負した際の勝率表(HJ)
-    # [ポケット             ] [A+ハイ        ] [K    ] [A+ロースーテッド ]
-    # AA, KK, QQ, JJ, TT, 99, AK, AQ, AJ, AT, KQ, KJ, A5, A4, A3, A2s
-    # Axo, A{9-6}s,弱いポケットの強さも気になる
 
 
 if __name__ == "__main__" :
