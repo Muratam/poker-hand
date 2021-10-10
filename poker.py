@@ -1,54 +1,177 @@
+import matplotlib.pyplot as plt
+from matplotlib.table import Table
+import numpy as np
 import random
-# 乱数は時計の秒針(の十の位と一の位を逆にしたもの)で作れそう？
 
-# ハイ: ±3%, ロー: ±1%, suited: +3%, pocket: ±3％
-# ハイ*3+ロー+9%+suited(3%)
-# ポケット*3 + 45%
-# 50%:      K-2, Q-5, J-8, 2-2
-# 60%: A-8, K-J,           5-5
+data = {
+    # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
+    "AA" : [6, 5], "KK" : [6, 5], "QQ": [6, 5], "JJ": [6, 4.8],
+    "TT" : [6, 4], "99" : [6, 4], "88": [6, 3], "77": [6, 2],
+    "66" : [6], "55" : [6], "44": [3.9], "33": [3.2],
+    "22" : [3],
+    "AKs": [6, 5], "AQs": [6, 4.4], "AJs": [6, 4.9], "ATs": [6, 5],
+    "A9s": [6], "A8s": [6], "A7s": [6], "A6s": [6],
+    "A5s": [6, 5], "A4s": [6, 5], "A3s": [6, 5], "A2s": [6, 5],
+    "KQs": [6, 5], "KJs": [6, 4.1], "KTs": [6], "K9s": [6],
+    "K8s": [4], "K7s": [4], "K6s": [3], "K5s": [3],
+    "K4s": [3], "K3s": [3], "K2s": [3],
+    "QJs": [6], "QTs": [6], "Q9s": [5], "Q8s": [4],
+    "Q7s": [3], "Q6s": [3], "Q5s": [3], "Q4s": [1],
+    "Q3s": [1], "Q2s": [2],
+    "JTs": [6], "J9s": [5], "J8s": [3.3], "J7s": [3],
+    "J6s": [1], "J5s": [1], "J4s": [1], "J3s": [1],
+    "J2s": [1],
+    "T9s": [6], "T8s": [4], "T7s": [3], "T6s": [2.3],
+    "T5s": [1.1], "T4s": [1.1],
+    "98s": [5.1], "97s": [4], "96s": [3], "95s": [1.2],
+    "87s": [4], "86s": [3.1], "85s": [2.9],
+    "76s": [4], "75s": [3], "74s": [1.1],
+    "65s": [4], "64s": [3], "63s": [1],
+    "54s": [4], "53s": [1.7],
+    "43s": [1.1],
+    # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
+    "AKo": [6, 5], "AQo": [6, 4.4], "AJo": [6], "ATo": [6],
+    "A9o": [4], "A8o": [3], "A7o": [3], "A6o": [3],
+    "A5o": [3], "A4o": [3], "A3o": [1.1], "A2o": [1.1],
+    "KQo": [6], "KJo": [6], "KTo": [4.9], "K9o": [1.9],
+    "K8o": [1.5], "K7o": [1], "K6o": [1], "K5o": [1.5],
+    "K4o": [1.4],
+    "QJo": [5.2], "QTo": [4.1], "Q9o": [3], "Q8o": [1.3],
+    "Q7o": [1.1],
+    "JTo": [4], "J9o": [3], "J8o": [1.5], "J7o": [1.1],
+    "T9o": [3], "T8o": [1.5], "T7o": [1.1],
+    "98o": [2], "97o": [1.5],
+    "87o": [2],
+}
 
-# プリフロップ：
-# if 10BB以上ある&&40%を超えている -> (強くても)10%の確率でリンプから入る
-#    -> VPIP += 7% になりそう
-# else: 嘘の二枚目を(勝率に応じて)引く
-# -> 6割超えてるならレイズ(3から入って6までは必ず追いかける)
-#    -> K-K, A-A: 初手オールインでも乗る(ブラフ時は相手が降りてくれないので乗らない)
-#    -> ~ min(x9, 自x0.5) : 気分でてきとうに
-#    -> min(x9, 自x0.5) ~: 真に AKo, AJs, 77 以上なら勝負に乗る, 嘘ならオリ
-# -> 5割超えてるならコール(max: 0.5) / レート上がったら即オリ(レンジが広いのが良い)
 
-# フロップ以降：
-# - 真の手が強い -> 通常戦略:
-#   - 今強い: レートを上げる(今までのベット額は忘れて)
-#      - x0.5(相手は25%勝てればいい) 固定(？)
-#      - ストーリーを保ちつつブラフが効くので、平時からドンクべットでいい
-#   - 今普通: チェックで回す&普通に楽しむ
-#   - 今弱い: チェック＆1BBでオリ
-# - 嘘の手が強い -> 通常戦略(オールインされた&&勝てないなら見破られたということで降参)
-# - 相手にレートを上げられた
-#   - 30%: 相手のストーリーは嘘。全て無視。通常戦略
-#   - 70%: 相手のストーリーは真。ちゃんと勝てそうなら乗る
+itoc = "AKQJT98765432"
+itoseat = ["UG", "HJ", "CO", "BN", "SB", "BB"]
+itonum  = [5, 4, 3, 2, 1, 0]
+
+def to_key(x, y):
+    ix = itoc[x]
+    iy = itoc[y]
+    if x == y: return ix + iy
+    elif x < y : return ix + iy + "s"
+    else: return iy + ix + "o"
+
+def random_flop_get(power, reraise=False):
+    while True:
+        r0 = random.choice([i for i in range(52)])
+        s0 = int(r0 / 13)
+        r1 = random.choice([i for i in range(52)])
+        s1 = int(r1 / 13)
+        if r0 == r1: continue
+        k = to_key(r0 % 13, r1 % 13)
+        if not (k in data): continue
+        if reraise:
+            if len(data[k]) == 1 : continue
+            if data[k][1] < power: continue
+        else:
+            if data[k][0] < power: continue
+        a0 = "♥♠◇♧"[s0] + f"{itoc[r0 % 13]}"
+        a1 = "♥♠◇♧"[s1] + f"{itoc[r1 % 13]}"
+        return a0, a1
+
+def print_stat():
+    # if random.random() < 0.1:
+    #     print("### リンプイン ###")
+    print("リレイズスタート時相手レイズ", end="：")
+    for i in range(3):
+        ok = ['ブラフ', "真"][int(random.random() < 0.7)]
+        print(f"{ok} ", end="")
+    print()
+    r0, r1 = random_flop_get(0, True)
+    print(f"{r0} {r1} : リレイズ")
+    for i in range(6):
+        power = itonum[i] + random.random()
+        r0, r1 = random_flop_get(power)
+        text = f"{r0} {r1} : {itoseat[i]}({power:.1f})"
+        if itoseat[i] == "SB":
+            if random.random() < 0.5: text += " CALL"
+            else: text += " BET"
+        print(text)
+    # print("BB: 相手の確率があればコール")
+    # つまり、これ以上の倍率でいくと相手が乗ってしまう、ので、先に降ろす
+    # フロップ時点(あと1枚で系)
+    # 1/4 (フラッシュ)
+    # 1/6 (ストレート)
+    # 1/7 (任意の一枚がほしい)
+
+def pick_raise(x, y):
+    key = to_key(x, y)
+    if not (key in data):
+        return 0.0
+    d = data[key]
+    return d[0]
+
+def pick_reraise(x, y):
+    key = to_key(x, y)
+    if not (key in data):
+        return 0.0
+    d = data[key]
+    if len(d) == 1: return 0.0
+    return d[1]
 
 
-def printCard():
-    r0 = random.choice([i for i in range(52)])
-    s0 = int(r0 / 13)
-    x0 = (r0 % 13) + 1
-    r1 = random.choice([i for i in range(52)])
-    s1 = int(r1 / 13)
-    x1 = (r1 % 13) + 1
-    if r0 == r1: return printCard()
-    a0 = "♥♤◆♧"[s0] + f"{x0}"
-    a1 = "♥♤◆♧"[s1] + f"{x1}"
-    print(f"{a0} {a1}", end = " ")
-    # <= 50%: フォールド
-    # <= 60%: コール
-    # else  : レイズ
+def pick_reraise_color(x,y):
+    v = pick_reraise(x, y)
+    return plt.cm.Greens(v / 6)
 
-if random.choice([True, False]):
-    printCard()
-    print(f"+{random.choice([0,1])}")
-else:
-    print("no card")
-r = random.random()
-print(f"Braf: {r<0.3} ({r:.2} {'><'[int(r<0.3)]} 0.3)")
+def pick_raise_text(x, y):
+    v = pick_raise(x, y)
+    if v < 0.1 : return ""
+    if v % 1.0 < 0.05: return v
+    return f"{v:.1f}"
+
+def plot():
+    plt.rcParams['font.family'] = 'Courier'
+    plt.tick_params(labelsize=30)
+    fig, ax = plt.subplots()
+    fig.suptitle('UTG:6, HJ:5, CO:4, BTN:3, SB:2, BB:1')
+    ax.set_axis_off()
+    tb = Table(ax, bbox=[0,0,1,1])
+    size = 1.0 / 13.0
+    for x in range(13):
+        for y in range(13):
+            edgecolor = 'none'
+            text = pick_raise_text(x, y)
+            if x == 6 or y == 6:
+                edgecolor = "#ccc"
+            tb.add_cell(x, y, size, size, text=text,
+                        loc='center', facecolor=pick_reraise_color(x,y),
+                        edgecolor=edgecolor)
+    for cell in tb._cells:
+        prop = tb._cells[cell].get_text()
+        text = prop.get_text()
+        try:
+            v = 1.0 - float(text) * 6 // 6 / 6
+            prop.set_color((v, v, v))
+        except ValueError: pass
+        prop.set_fontstyle('italic')
+
+    for i in range(13):
+        tb.add_cell(i, -1, size, size, text=itoc[i], loc='center',
+                    edgecolor='#ccc', facecolor='none')
+        tb.add_cell(i, 13, size, size, text=itoc[i], loc='center',
+                    edgecolor='#ccc', facecolor='none')
+        tb.add_cell(-1, i, size, size, text=itoc[i], loc='center',
+                           edgecolor='#ccc', facecolor='none')
+        tb.add_cell(13, i, size, size, text=itoc[i], loc='center',
+                           edgecolor='#ccc', facecolor='none')
+    tb.add_cell(-1, -1, size, size, text="o \ s", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(-1, 13, size, size, text="s", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(13, -1, size, size, text="o", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(13, 13, size, size, text="o \ s", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.auto_set_font_size(False)
+    tb.set_fontsize(12)
+    ax.add_table(tb)
+    plt.show()
+
+print_stat()
+# plot()
