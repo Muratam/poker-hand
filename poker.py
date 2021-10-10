@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.table import Table
 import numpy as np
 import random
+from optparse import OptionParser
 
 data = {
     # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
@@ -125,9 +126,7 @@ def pick_raise_text(x, y):
     if v % 1.0 < 0.05: return v
     return f"{v:.1f}"
 
-def plot():
-    plt.rcParams['font.family'] = 'Courier'
-    plt.tick_params(labelsize=30)
+def plot_handrange():
     fig, ax = plt.subplots()
     fig.suptitle('UTG:6, HJ:5, CO:4, BTN:3, SB:2, BB:1')
     ax.set_axis_off()
@@ -171,7 +170,17 @@ def plot():
     tb.auto_set_font_size(False)
     tb.set_fontsize(12)
     ax.add_table(tb)
+    plt.rcParams['font.family'] = 'Courier'
+    plt.tick_params(labelsize=30)
     plt.show()
 
-print_stat()
-# plot()
+if __name__ == "__main__" :
+    parser = OptionParser()
+    parser.add_option("--handrange",
+        help="show handrange table",
+        action="store_true")
+    (options, args) = parser.parse_args()
+    if options.handrange:
+        plot_handrange()
+    else:
+        print_stat()
