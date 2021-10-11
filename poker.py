@@ -93,6 +93,9 @@ def print_stat():
             if random.random() < 0.5: text += " CALL"
             else: text += " BET"
         print(text)
+    for i in range(10):
+        print(int(random.random() * 100), end=" ")
+    print()
 
 def pick_raise(x, y):
     key = to_key(x, y)
