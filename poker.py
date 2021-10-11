@@ -30,7 +30,7 @@ card_data = {
     "98s": [5.1], "97s": [4], "96s": [3], "95s": [1.2],
     "87s": [4], "86s": [3.1], "85s": [2.9],
     "76s": [4], "75s": [3], "74s": [1.1],
-    "65s": [4, 5], "64s": [3], "63s": [1],
+    "65s": [4, 6], "64s": [3], "63s": [1],
     "54s": [4], "53s": [1.7],
     "43s": [1.1],
     # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
@@ -195,6 +195,120 @@ def run_to_data():
             rates = holdem_calc.module([ce0[0], ce0[1], ce1[0], ce1[1]], False)
             # Tie, Win, Lose
             print(f"{c0}:{c1}:{int(rates[0]*100)}:{int(rates[1]*100)}:{int(rates[2]*100)}")
+
+ranges = [
+    "Re", "C-6", "C-5", "C-4", "R-3",
+    "UTG", "HJ", "CO", "BTN", "SB"
+]
+def get_range(i):
+    # とりあえず UTG
+    mays = {}
+    h1 = 0 # heart を1枚以上持っている確率
+    h2 = 0 # heart を2枚以上持っている確率
+    all = 0
+    pair = 0
+    for k, v in card_data.items():
+        if ranges[i] == "Re":
+            if len(v) == 1: continue
+            if v[1] < 7: continue
+        if ranges[i] == "C-6":
+            if len(v) == 1: continue
+            if v[1] < 6: continue
+        if ranges[i] == "C-5":
+            if len(v) == 1: continue
+            if v[1] < 5: continue
+        if ranges[i] == "C-4":
+            if len(v) == 1: continue
+            if v[1] < 4: continue
+        if ranges[i] == "R-3":
+            if len(v) == 1: continue
+            if v[1] < 3: continue
+        if ranges[i] == "UTG" and v[0] <= 5.5: continue
+        if ranges[i] == "HJ" and v[0] <= 4.5: continue
+        if ranges[i] == "CO" and v[0] <= 3.5: continue
+        if ranges[i] == "BTN" and v[0] <= 2.5: continue
+        if ranges[i] == "SB" and v[0] <= 1.8: continue
+        if not (k[0] in mays): mays[k[0]] = 0
+        if not (k[1] in mays): mays[k[1]] = 0
+        if k[0] == k[1]:
+            all += 6
+            mays[k[0]] += 6 # 4C3通り
+            h1 += 3
+            pair += 6
+        elif k[2] == "s":
+            all += 4
+            mays[k[0]] += 4
+            mays[k[1]] += 4 # 4スート
+            h1 += 1
+            h2 += 1
+        else:
+            all += 12
+            mays[k[0]] += 12
+            mays[k[1]] += 12 # 4x3通り
+            h1 += 6
+    for k in [ _ for _ in mays.keys()]:
+        mays[k] /= all
+
+    result = []
+    for k in itocard:
+        if k in mays: result += [mays[k]]
+        else: result += [0]
+    result += [h1 / all]
+    result += [h2 / all]
+    result += [pair / all]
+    return result
+
+
+def plot_card_rate():
+    # 持ってる割合
+    # reraise / call / SB, BTN, C0, HJ, UTG
+    # BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
+    # 1vs1で勝負した際の勝率表(UTG-リレイズ)
+    # スートは全て相手と異なるとする
+    ylabels = ranges
+    xlabels = list(itocard) + ["♧1", "♧2", "Pair"]
+    fig, ax = plt.subplots()
+    fig.suptitle('Having Rate')
+    ax.set_axis_off()
+    cards = vs_rate_cards
+    tb = Table(ax, bbox=[0,0,1,1])
+    data = get_run_data()
+    size = 1.0 / (len(cards) + 2.0)
+    for x in range(len(ylabels)):
+        rates = get_range(x)
+        for y in range(len(xlabels)):
+            edgecolor = 'none'
+            if x == 5 or y == 13:
+                edgecolor = '#ccc'
+            text = f"{int(rates[y] * 100)}"
+            color = plt.cm.Greens(rates[y] * 1.5)
+            tb.add_cell(x, y, size, size, text=text,
+                loc='center', facecolor=color,
+                edgecolor=edgecolor)
+    for i in range(len(xlabels)):
+        tb.add_cell(-1, i, size, size, text=xlabels[i], loc='center',
+                    edgecolor='#ccc', facecolor='none')
+        tb.add_cell(len(ylabels), i, size, size, text=xlabels[i], loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    for i in range(len(ylabels)):
+        tb.add_cell(i, -1, size, size, text=ylabels[i], loc='center',
+                           edgecolor='#ccc', facecolor='none')
+        tb.add_cell(i, len(xlabels),  size, size, text=ylabels[i], loc='center',
+                           edgecolor='#ccc', facecolor='none')
+    tb.add_cell(-1, -1, size, size, text="\\", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(-1, len(xlabels), size, size, text="c", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(len(ylabels), -1, size, size, text="pos", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.add_cell(len(ylabels), len(xlabels), size, size, text="\\", loc='center',
+                    edgecolor='#ccc', facecolor='none')
+    tb.auto_set_font_size(False)
+    tb.set_fontsize(12)
+    ax.add_table(tb)
+    plt.rcParams['font.family'] = 'DejaVu Sans'
+    plt.tick_params(labelsize=30)
+    plt.show()
 
 def get_run_data():
     data = """
@@ -460,11 +574,16 @@ if __name__ == "__main__" :
     parser.add_option("--vsrate",
         help="show vs rate table",
         action="store_true")
+    parser.add_option("--cardrate",
+        help="card rate table",
+        action="store_true")
     (options, args) = parser.parse_args()
     if options.handrange:
         plot_handrange()
     elif options.vsrate:
         # run_to_data()
         plot_vs_rate()
+    elif options.cardrate:
+        plot_card_rate()
     else:
         print_stat()
