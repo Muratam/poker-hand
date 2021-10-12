@@ -176,7 +176,7 @@ def plot_handrange():
         for y in range(13):
             edgecolor = 'none'
             text = pick_raise_text(x, y)
-            if y == 8 or x == 8:
+            if y == 6 or x == 6:
                 edgecolor = "#ccc"
             tb.add_cell(x, y, size, size, text=text,
                         loc='center', facecolor=pick_reraise_color(x,y),
