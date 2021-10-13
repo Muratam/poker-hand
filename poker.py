@@ -52,14 +52,14 @@ card_data = {
 # 30BB, 1POT
 card_data = {
     # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    "AA" : [6, 7], "KK" : [6, 7], "QQ": [6, 7], "JJ": [6, 6],
-    "TT" : [6, 6], "99" : [5.6, 5], "88": [5, 4], "77": [5],
+    "AA" : [10, 7], "KK" : [10, 7], "QQ": [10, 7], "JJ": [9, 6],
+    "TT" : [9, 6], "99" : [5.6, 5], "88": [5, 4], "77": [5],
     "66" : [5], "55" : [4], "44": [3], "33": [3],
     "22" : [2.6],
-    "AKs": [6, 7], "AQs": [6, 6], "AJs": [6, 5], "ATs": [6, 4],
+    "AKs": [10, 7], "AQs": [9, 6], "AJs": [8, 5], "ATs": [7, 4],
     "A9s": [6, 3], "A8s": [6, 3], "A7s": [5.7], "A6s": [5.7],
     "A5s": [5.8], "A4s": [5.7], "A3s": [5], "A2s": [4.6],
-    "KQs": [6, 5], "KJs": [6, 3], "KTs": [6, 3], "K9s": [5.9],
+    "KQs": [8, 5], "KJs": [6, 3], "KTs": [6, 3], "K9s": [5.9],
     "K8s": [4], "K7s": [3.6], "K6s": [3.9], "K5s": [3],
     "K4s": [3], "K3s": [3], "K2s": [2.5],
     "QJs": [6, 3], "QTs": [6, 3], "Q9s": [4.6], "Q8s": [3.4],
@@ -77,7 +77,7 @@ card_data = {
     "54s": [3], "53s": [2],
     "43s": [2], "32s": [1],
     # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    "AKo": [6, 7], "AQo": [6, 5], "AJo": [6, 4], "ATo": [5.5, 3],
+    "AKo": [10, 7], "AQo": [8, 5], "AJo": [7, 4], "ATo": [5.5, 3],
     "A9o": [4], "A8o": [3.9], "A7o": [3], "A6o": [3],
     "A5o": [3], "A4o": [3], "A3o": [2], "A2o": [2],
     "KQo": [6, 3], "KJo": [5.6], "KTo": [3.6], "K9o": [3],
@@ -242,6 +242,43 @@ def run_to_data():
             rates = holdem_calc.module([ce0[0], ce0[1], ce1[0], ce1[1]], False)
             # Tie, Win, Lose
             print(f"{c0}:{c1}:{int(rates[0]*100)}:{int(rates[1]*100)}:{int(rates[2]*100)}")
+
+# def get_win_rates():
+#     f = open("result.txt", "w")
+#     # AA:AKs:1:87:11 <- tie / win /lose
+#     def writeout(cm0, cm1, ce0, ce1):
+#         rates = holdem_calc.module([cm0, cm1, ce0, ce1], False)
+#         f.write("")
+#     def impl(i, j, k, l):
+#         # dchs
+#         if i == j:
+#             cm0 = itocard[i] + "d"
+#             cm1 = itocard[j] + "c"
+#             if k == l:
+#                 ce0 = itocard[i] + "h"
+#                 ce1 = itocard[j] + "s"
+#                 # 66 vs 44
+#             else:
+#                 for se in [True, False]:
+#                     if se:
+#                         # 66 vs 34s
+#                         ce0 = itocard[i] + "h"
+#                         ce1 = itocard[j] + "h"
+#                     else:
+#                         # 66 vs 34o
+#         else:
+#             if k == l:
+#             else:
+#         print(cm0, cm1, ce0, ce1)
+#         c += 1
+#     card_max = 3
+#     # 1820通り
+#     for i in range(card_max):
+#         for j in range(i, card_max):
+#             for k in range(j, card_max):
+#                 for l in range(k, card_max):
+#                     impl(i, j, k, l)
+
 
 ranges = [
     "Re", "C-6", "C-5", "C-4", "R-3",
@@ -615,6 +652,7 @@ def plot_vs_rate():
 
 if __name__ == "__main__" :
     parser = OptionParser()
+    # get_win_rates()
     parser.add_option("--handrange",
         help="show handrange table",
         action="store_true")
