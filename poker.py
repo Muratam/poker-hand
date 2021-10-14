@@ -7,88 +7,56 @@ from optparse import OptionParser
 sys.path.append('./holdem_calc')
 import holdem_calc
 
-# rev 1
+# 30BB, 0.5POT
 card_data = {
-    # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    "AA" : [6, 7], "KK" : [6, 7], "QQ": [6, 7], "JJ": [6, 6],
-    "TT" : [6, 6], "99" : [6, 6], "88": [6, 5], "77": [6, 4],
-    "66" : [6, 3], "55" : [6], "44": [3.9], "33": [3.2],
-    "22" : [3],
-    "AKs": [6, 7], "AQs": [6, 6], "AJs": [6, 6], "ATs": [6, 7],
-    "A9s": [6, 3], "A8s": [6, 3], "A7s": [6], "A6s": [6],
-    "A5s": [6, 7], "A4s": [6, 7], "A3s": [6, 7], "A2s": [6, 7],
-    "KQs": [6, 7], "KJs": [6, 5], "KTs": [6, 4], "K9s": [6],
-    "K8s": [4], "K7s": [4], "K6s": [3], "K5s": [3],
-    "K4s": [3], "K3s": [3], "K2s": [3],
-    "QJs": [6, 5], "QTs": [6, 3], "Q9s": [5], "Q8s": [4],
-    "Q7s": [3], "Q6s": [3], "Q5s": [3], "Q4s": [1],
-    "Q3s": [1], "Q2s": [1.9],
-    "JTs": [6, 4], "J9s": [5], "J8s": [3.3], "J7s": [3],
-    "J6s": [1], "J5s": [1], "J4s": [1], "J3s": [1],
-    "J2s": [1],
-    "T9s": [6, 3], "T8s": [4], "T7s": [3], "T6s": [2.3],
-    "T5s": [1.1], "T4s": [1.1],
-    "98s": [5.1], "97s": [4], "96s": [3], "95s": [1.2],
-    "87s": [4], "86s": [3.1], "85s": [2.9],
-    "76s": [4], "75s": [3], "74s": [1.1],
-    "65s": [4, 6], "64s": [3], "63s": [1],
-    "54s": [4], "53s": [1.7],
-    "43s": [1.1],
-    # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    "AKo": [6, 7], "AQo": [6, 5], "AJo": [6, 3], "ATo": [6],
-    "A9o": [4], "A8o": [3], "A7o": [3], "A6o": [3],
-    "A5o": [3], "A4o": [3], "A3o": [1.1], "A2o": [1.1],
-    "KQo": [6, 3], "KJo": [6], "KTo": [4.9], "K9o": [4],
-    "K8o": [1.5], "K7o": [1], "K6o": [1], "K5o": [1.5],
-    "K4o": [1.4],
-    "QJo": [5.2], "QTo": [4.1], "Q9o": [3], "Q8o": [1.3],
-    "Q7o": [1.1],
-    "JTo": [4], "J9o": [3], "J8o": [1.5], "J7o": [1.1],
-    "T9o": [3], "T8o": [1.5], "T7o": [1.1],
-    "98o": [2], "97o": [1.5],
-    "87o": [2],
-}
-
-# 30BB, 1POT
-card_data = {
-    # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    "AA" : [10, 7], "KK" : [10, 7], "QQ": [10, 7], "JJ": [9, 6],
-    "TT" : [9, 6], "99" : [5.6, 5], "88": [5, 4], "77": [5],
-    "66" : [5], "55" : [4], "44": [3], "33": [3],
-    "22" : [2.6],
-    "AKs": [10, 7], "AQs": [9, 6], "AJs": [8, 5], "ATs": [7, 4],
-    "A9s": [6, 3], "A8s": [6, 3], "A7s": [5.7], "A6s": [5.7],
-    "A5s": [5.8], "A4s": [5.7], "A3s": [5], "A2s": [4.6],
-    "KQs": [8, 5], "KJs": [6, 3], "KTs": [6, 3], "K9s": [5.9],
-    "K8s": [4], "K7s": [3.6], "K6s": [3.9], "K5s": [3],
-    "K4s": [3], "K3s": [3], "K2s": [2.5],
-    "QJs": [6, 3], "QTs": [6, 3], "Q9s": [4.6], "Q8s": [3.4],
-    "Q7s": [2.6], "Q6s": [2], "Q5s": [2], "Q4s": [2],
-    "Q3s": [1], "Q2s": [2],
-    "JTs": [6, 3], "J9s": [4.6], "J8s": [3.4], "J7s": [3],
-    "J6s": [2], "J5s": [2], "J4s": [1], "J3s": [1.2],
-    "J2s": [1.8],
-    "T9s": [4.6], "T8s": [3.6], "T7s": [3], "T6s": [2],
-    "T5s": [2], "T4s": [1.3], "T3s": [1],
-    "98s": [3.6], "97s": [3], "96s": [2], "95s": [2],
-    "87s": [3], "86s": [2.6], "85s": [1.7],
-    "76s": [3], "75s": [2], "74s": [2],
-    "65s": [3], "64s": [2], "63s": [1],
-    "54s": [3], "53s": [2],
-    "43s": [2], "32s": [1],
-    # raise or fold: BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
-    "AKo": [10, 7], "AQo": [8, 5], "AJo": [7, 4], "ATo": [5.5, 3],
-    "A9o": [4], "A8o": [3.9], "A7o": [3], "A6o": [3],
-    "A5o": [3], "A4o": [3], "A3o": [2], "A2o": [2],
-    "KQo": [6, 3], "KJo": [5.6], "KTo": [3.6], "K9o": [3],
-    "K8o": [2], "K7o": [2], "K6o": [2], "K5o": [2],
-    "K4o": [2], "K3o": [1], "K2o": [2],
-    "QJo": [4], "QTo": [3.5], "Q9o": [2.5], "Q8o": [2],
-    "Q7o": [2], "Q6o": [2],
-    "JTo": [3], "J9o": [2.8], "J8o": [2], "J7o": [2],
-    "T9o": [3], "T8o": [2], "T7o": [2],
-    "98o": [2], "97o": [1.5],
-    "87o": [2], "76o": [2], "65o": [1],
+    # raise or fold: BB[0-2], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
+    "AA" : [8, 7], "KK" : [8, 7], "QQ": [8, 7], "JJ": [8, 7],
+    "TT" : [7.8, 7], "99" : [6.1, 6], "88": [6, 6], "77": [6, 6],
+    "66" : [4.5, 6], "55" : [4, 6], "44": [2.6, 6], "33": [2, 5], "22": [2, 5],
+    "AKs": [8, 7], "AQs": [8, 6], "AJs": [8, 6], "ATs": [8, 6],
+    "A9s": [7.8, 6], "A8s": [7.8, 6], "A7s": [6, 5], "A6s": [7, 5],
+    "A5s": [7, 6], "A4s": [7, 6], "A3s": [6.3, 5], "A2s": [6.1, 4],
+    "KQs": [7.8, 6], "KJs": [7, 6], "KTs": [7, 6], "K9s": [6.2, 5],
+    "K8s": [5.3, 4], "K7s": [5, 3], "K6s": [3.5, 3], "K5s": [3, 3],
+    "K4s": [3, 3], "K3s": [2.9, 3], "K2s": [2, 3],
+    "QJs": [7.8, 6], "QTs": [6.6, 5], "Q9s": [6.1, 5], "Q8s": [4, 3],
+    "Q7s": [3], "Q6s": [2.7], "Q5s": [2], "Q4s": [2], "Q3s": [2], "Q2s": [2],
+    "JTs": [6.8, 6], "J9s": [6.2, 5], "J8s": [3.2, 3], "J7s": [2],
+    "J6s": [2], "J5s": [2], "J4s": [2], "J3s": [1.5], "J2s": [1.5],
+    "T9s": [6.2, 5], "T8s": [3, 4], "T7s": [2, 3], "T6s": [2],
+    "T5s": [1.5], "T4s": [1.5], "T3s": [1], "T2s": [1],
+    "98s": [3, 3], "97s": [2], "96s": [2],
+    "95s": [1.5], "94s": [1], "93s": [1], "92s": [0.5],
+    "87s": [3, 3], "86s": [2], "85s": [2], "84s": [1.5],
+    "83s": [0.5], "82s": [0.5],
+    "76s": [2.3, 3], "75s": [2], "74s": [1.5], "73s": [1],
+    "72s": [0.5],
+    "65s": [2], "64s": [2], "63s": [1.5], "62s": [1],
+    "54s": [2], "53s": [1.5], "52s": [1.5],
+    "43s": [1.5], "42s": [1.5], "32s": [1.5],
+    "AKo": [8, 7], "AQo": [8, 6], "AJo": [8, 6], "ATo": [6.6, 6],
+    "A9o": [6, 3], "A8o": [4.9, 3], "A7o": [3.5, 3], "A6o": [3, 3],
+    "A5o": [3, 3], "A4o": [3, 3], "A3o": [3, 3], "A2o": [2],
+    "KQo": [7, 6], "KJo": [6.2, 5], "KTo": [6, 3], "K9o": [4, 3],
+    "K8o": [3], "K7o": [2], "K6o": [2],
+    "K5o": [1], "K4o": [1], "K3o": [1], "K2o": [1],
+    "QJo": [6.3, 4], "QTo": [5, 3], "Q9o": [3], "Q8o": [2],
+    "Q7o": [1], "Q6o": [0.5], "Q5o": [0.5],
+    "Q4o": [0.5], "Q3o": [0.5], "Q2o": [0.5],
+    "JTo": [3, 3], "J9o": [3], "J8o": [2], "J7o": [0.5],
+    "J6o": [0], "J5o": [0], "J4o": [0], "J3o": [0], "J2o": [0],
+    "T9o": [2, 3], "T8o": [2], "T7o": [0.5], "T6o": [0], "T5o": [0],
+    "98o": [2], "97o": [1], "96o": [0.5],
+    "95o": [0], "94o": [0], "93o": [0], "92o": [0],
+    "87o": [2], "86o": [1], "85o": [0],
+    "76o": [1.5], "75o": [0.5], "74o": [0],
+    "65o": [1.5], "64o": [0],
+    "54o": [1], "43o": [0],
+    "T4o": [-1], "T3o": [-1], "T2o": [-2],
+    "94o": [-2], "93o": [-2], "92o": [-2],
+    "84o": [-2], "83o": [-2], "82o": [-2], "73o": [-2], "72o": [-2],
+    "63o": [-2], "62o": [-2],
+    "53o": [-1], "52o": [-2], "42o": [-2], "32o": [-2],
 }
 
 
@@ -144,7 +112,7 @@ def print_stat():
 def pick_raise(x, y):
     key = to_key(x, y)
     if not (key in card_data):
-        return 0.0
+        return -10.0
     d = card_data[key]
     return d[0]
 
@@ -162,13 +130,13 @@ def pick_reraise_color(x,y):
 
 def pick_raise_text(x, y):
     v = pick_raise(x, y)
-    if v < 0.1 : return ""
+    if v < -9.0 : return ""
     if v % 1.0 < 0.05: return v
     return f"{v:.1f}"
 
 def plot_handrange():
     fig, ax = plt.subplots()
-    fig.suptitle('UTG:6, HJ:5, CO:4, BTN:3, SB:2, BB:1')
+    fig.suptitle('UTG:6/3o2s, HJ:5/1.5, CO:4/1, BTN:3/0.5, SB:0/2')
     ax.set_axis_off()
     tb = Table(ax, bbox=[0,0,1,1])
     size = 1.0 / (13.0 + 2.0)
@@ -185,25 +153,28 @@ def plot_handrange():
         prop = tb._cells[cell].get_text()
         text = prop.get_text()
         try:
-            v = 1.0 - float(text) * 6 // 6 / 6
-            prop.set_color((v, v, v))
+            if float(text) < 0:
+                prop.set_color((0.9, 0.6, 0.6))
+            else:
+                v = 0.6 - (float(text) - 1) * 6 // 6 / 6
+                prop.set_color((v, v, v))
         except ValueError: pass
         prop.set_fontstyle('italic')
 
     for i in range(13):
-        tb.add_cell(i, -1, size, size, text=itocard[i], loc='center',
+        tb.add_cell(i, -2, size, size, text=itocard[i], loc='center',
                     edgecolor='#ccc', facecolor='none')
         tb.add_cell(i, 13, size, size, text=itocard[i], loc='center',
                     edgecolor='#ccc', facecolor='none')
-        tb.add_cell(-1, i, size, size, text=itocard[i], loc='center',
+        tb.add_cell(-2, i, size, size, text=itocard[i], loc='center',
                            edgecolor='#ccc', facecolor='none')
         tb.add_cell(13, i, size, size, text=itocard[i], loc='center',
                            edgecolor='#ccc', facecolor='none')
-    tb.add_cell(-1, -1, size, size, text="o \ s", loc='center',
+    tb.add_cell(-2, -2, size, size, text="o \ s", loc='center',
                     edgecolor='#ccc', facecolor='none')
-    tb.add_cell(-1, 13, size, size, text="s", loc='center',
+    tb.add_cell(-2, 13, size, size, text="s", loc='center',
                     edgecolor='#ccc', facecolor='none')
-    tb.add_cell(13, -1, size, size, text="o", loc='center',
+    tb.add_cell(13, -2, size, size, text="o", loc='center',
                     edgecolor='#ccc', facecolor='none')
     tb.add_cell(13, 13, size, size, text="o \ s", loc='center',
                     edgecolor='#ccc', facecolor='none')
@@ -346,7 +317,7 @@ def get_range(i):
 def plot_card_rate():
     # 持ってる割合
     # reraise / call / SB, BTN, C0, HJ, UTG
-    # BB[0-1], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
+    # BB[0-2], SB[1-2], BTN[2-3], CO[3-4], HJ[4-5], UTG[5-6]
     # 1vs1で勝負した際の勝率表(UTG-リレイズ)
     # スートは全て相手と異なるとする
     ylabels = ranges
@@ -370,20 +341,20 @@ def plot_card_rate():
                 loc='center', facecolor=color,
                 edgecolor=edgecolor)
     for i in range(len(xlabels)):
-        tb.add_cell(-1, i, size, size, text=xlabels[i], loc='center',
+        tb.add_cell(-2, i, size, size, text=xlabels[i], loc='center',
                     edgecolor='#ccc', facecolor='none')
         tb.add_cell(len(ylabels), i, size, size, text=xlabels[i], loc='center',
                     edgecolor='#ccc', facecolor='none')
     for i in range(len(ylabels)):
-        tb.add_cell(i, -1, size, size, text=ylabels[i], loc='center',
+        tb.add_cell(i, -2, size, size, text=ylabels[i], loc='center',
                            edgecolor='#ccc', facecolor='none')
         tb.add_cell(i, len(xlabels),  size, size, text=ylabels[i], loc='center',
                            edgecolor='#ccc', facecolor='none')
-    tb.add_cell(-1, -1, size, size, text="\\", loc='center',
+    tb.add_cell(-2, -2, size, size, text="\\", loc='center',
                     edgecolor='#ccc', facecolor='none')
-    tb.add_cell(-1, len(xlabels), size, size, text="c", loc='center',
+    tb.add_cell(-2, len(xlabels), size, size, text="c", loc='center',
                     edgecolor='#ccc', facecolor='none')
-    tb.add_cell(len(ylabels), -1, size, size, text="pos", loc='center',
+    tb.add_cell(len(ylabels), -2, size, size, text="pos", loc='center',
                     edgecolor='#ccc', facecolor='none')
     tb.add_cell(len(ylabels), len(xlabels), size, size, text="\\", loc='center',
                     edgecolor='#ccc', facecolor='none')
@@ -626,19 +597,19 @@ def plot_vs_rate():
                 loc='center', facecolor=color,
                 edgecolor=edgecolor)
     for i in range(len(cards)):
-        tb.add_cell(i, -1, size, size, text=cards[i], loc='center',
+        tb.add_cell(i, -2, size, size, text=cards[i], loc='center',
                     edgecolor='#ccc', facecolor='none')
         tb.add_cell(i, len(cards), size, size, text=cards[i], loc='center',
                     edgecolor='#ccc', facecolor='none')
-        tb.add_cell(-1, i, size, size, text=cards[i], loc='center',
+        tb.add_cell(-2, i, size, size, text=cards[i], loc='center',
                            edgecolor='#ccc', facecolor='none')
         tb.add_cell(len(cards), i, size, size, text=cards[i], loc='center',
                            edgecolor='#ccc', facecolor='none')
-    tb.add_cell(-1, -1, size, size, text="\\", loc='center',
+    tb.add_cell(-2, -2, size, size, text="\\", loc='center',
                     edgecolor='#ccc', facecolor='none')
-    tb.add_cell(-1, len(cards), size, size, text="vs", loc='center',
+    tb.add_cell(-2, len(cards), size, size, text="vs", loc='center',
                     edgecolor='#ccc', facecolor='none')
-    tb.add_cell(len(cards), -1, size, size, text="me", loc='center',
+    tb.add_cell(len(cards), -2, size, size, text="me", loc='center',
                     edgecolor='#ccc', facecolor='none')
     tb.add_cell(len(cards), len(cards), size, size, text="\\", loc='center',
                     edgecolor='#ccc', facecolor='none')
