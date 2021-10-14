@@ -136,7 +136,7 @@ def pick_raise_text(x, y):
 
 def plot_handrange():
     fig, ax = plt.subplots()
-    fig.suptitle('UTG:6/3o2s, HJ:5/1.5, CO:4/1, BTN:3/0.5, SB:0/2')
+    fig.suptitle('UTG:6/3o2s, HJ:5/1.5, CO:4/1, BTN:3/0.5, SB:0/2/3/4')
     ax.set_axis_off()
     tb = Table(ax, bbox=[0,0,1,1])
     size = 1.0 / (13.0 + 2.0)
